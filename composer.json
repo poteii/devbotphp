@@ -1,13 +1,4 @@
 {
-  "name": "linecorp/line-bot-sdk",
-  "description": "SDK of the LINE BOT API for PHP",
-  "keywords": [
-    "LINE",
-    "bot",
-    "sdk"
-  ],
-  "type": "library",
-  "homepage": "https://github.com/line/line-bot-sdk-php",
   "license": "Apache License Version 2.0",
   "authors": [
     {
@@ -32,11 +23,6 @@
   "autoload": {
     "psr-4": {
       "LINE\\": "src/"
-    }
-  },
-  "autoload-dev": {
-    "psr-4": {
-      "LINE\\Tests\\": "tests/"
     }
   }
 }
