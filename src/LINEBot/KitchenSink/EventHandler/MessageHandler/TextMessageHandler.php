@@ -36,6 +36,8 @@ use LINE\LINEBot\MessageBuilder\TemplateBuilder\CarouselColumnTemplateBuilder;
 use LINE\LINEBot\MessageBuilder\TemplateBuilder\CarouselTemplateBuilder;
 use LINE\LINEBot\MessageBuilder\TemplateBuilder\ConfirmTemplateBuilder;
 
+use Predis\Client;
+
 class TextMessageHandler implements EventHandler
 {
     /** @var LINEBot $bot */
@@ -46,7 +48,7 @@ class TextMessageHandler implements EventHandler
     private $req;
     /** @var TextMessage $textMessage */
     private $textMessage;
-
+    private $redis;
     /**
      * TextMessageHandler constructor.
      * @param $bot
@@ -60,6 +62,8 @@ class TextMessageHandler implements EventHandler
         $this->logger = $logger;
         $this->req = $req;
         $this->textMessage = $textMessage;
+        $this->redis = new Client(getenv('
+redis://h:p124f3875f348e38f1dc7cec31fd2acbbb43201e9658f69bf73614299557b2764@ec2-34-227-145-196.compute-1.amazonaws.com:36069'));
     }
 
     public function handle()
@@ -157,11 +161,32 @@ class TextMessageHandler implements EventHandler
                 $this->bot->replyMessage($replyToken, $imagemapMessageBuilder);
                 break;
             default:
+                $TEACH_SIGN = '==';
                 if (strstr($text,'สวัสดี')) {
                     $userId = $this->textMessage->getUserId();
                     $userInfo = $this->bot->getProfile($userId);
                     $profile = $userInfo->getJSONDecodedBody();
                     $text = 'สวัสดีค่ะ คุณ '.$profile['displayName'];
+                }else{
+                    $sep_pos = strpos($text, $TEACH_SIGN);
+                    if ($sep_pos > 0) {
+                        $text_arr = explode($TEACH_SIGN, $text, 2);
+                        if (count($text_arr) == 2) {
+                            $this->saveResponse($text_arr[0], $text_arr[1]);
+                        }
+                        return true;
+                    }
+                    $re = $this->getResponse($text);
+                    $re_count = count($re);
+                    if ($re_count > 0) {
+                        // Random response.
+                        $randNum = rand(0, $re_count - 1);
+                        $response = $re[$randNum];
+                        $this->bot->replyText($replyToken, $response);
+                        return true;
+                    }
+                    return false;
+
                 }
                 $this->echoBack($replyToken, $text);
                 break;
@@ -197,5 +222,15 @@ class TextMessageHandler implements EventHandler
             'Display name: ' . $profile['displayName'],
             'Status message: ' . $profile['statusMessage']
         );
+    }
+    
+     private function saveResponse($keyword, $response)
+    {
+        $this->redis->lpush("response:$keyword", $response);
+    }
+    
+    private function getResponse($keyword)
+    {
+        return $this->redis->lrange("response:$keyword", 0, -1);
     }
 }
