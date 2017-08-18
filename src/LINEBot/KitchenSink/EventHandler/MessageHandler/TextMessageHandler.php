@@ -36,7 +36,6 @@ use LINE\LINEBot\MessageBuilder\TemplateBuilder\CarouselColumnTemplateBuilder;
 use LINE\LINEBot\MessageBuilder\TemplateBuilder\CarouselTemplateBuilder;
 use LINE\LINEBot\MessageBuilder\TemplateBuilder\ConfirmTemplateBuilder;
 
-use Predis\Client;
 
 class TextMessageHandler implements EventHandler
 {
@@ -48,7 +47,6 @@ class TextMessageHandler implements EventHandler
     private $req;
     /** @var TextMessage $textMessage */
     private $textMessage;
-    private $redis;
     /**
      * TextMessageHandler constructor.
      * @param $bot
@@ -167,26 +165,6 @@ redis://h:p124f3875f348e38f1dc7cec31fd2acbbb43201e9658f69bf73614299557b2764@ec2-
                     $userInfo = $this->bot->getProfile($userId);
                     $profile = $userInfo->getJSONDecodedBody();
                     $text = 'สวัสดีค่ะ คุณ '.$profile['displayName'];
-                }else{
-                    $sep_pos = strpos($text, $TEACH_SIGN);
-                    if ($sep_pos > 0) {
-                        $text_arr = explode($TEACH_SIGN, $text, 2);
-                        if (count($text_arr) == 2) {
-                            $this->saveResponse($text_arr[0], $text_arr[1]);
-                        }
-                        return true;
-                    }
-                    $re = $this->getResponse($text);
-                    $re_count = count($re);
-                    if ($re_count > 0) {
-                        // Random response.
-                        $randNum = rand(0, $re_count - 1);
-                        $response = $re[$randNum];
-                        $this->bot->replyText($replyToken, $response);
-                        return true;
-                    }
-                    return false;
-
                 }
                 $this->echoBack($replyToken, $text);
                 break;
@@ -224,13 +202,4 @@ redis://h:p124f3875f348e38f1dc7cec31fd2acbbb43201e9658f69bf73614299557b2764@ec2-
         );
     }
     
-     private function saveResponse($keyword, $response)
-    {
-        $this->redis->lpush("response:$keyword", $response);
-    }
-    
-    private function getResponse($keyword)
-    {
-        return $this->redis->lrange("response:$keyword", 0, -1);
-    }
 }
