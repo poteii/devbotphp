@@ -164,9 +164,9 @@ redis://h:p124f3875f348e38f1dc7cec31fd2acbbb43201e9658f69bf73614299557b2764@ec2-
                     $profile = $userInfo->getJSONDecodedBody();
                 if (strstr($text,'สวัสดี')) {
                     $text = 'สวัสดีค่ะ คุณ '.$profile['displayName'];
-                }else if(strstr($event['message']['text'], 'ร้องเรียน') ||  strstr($event['message']['text'], 'ปัญหา')){
-				    $text = "กรุณากรอกรายละเอียดตามนี้ https://devsbottext.herokuapp.com/complainform.php?userId=".$userId;
-			    }
+                }else if(strstr($text, 'ร้องเรียน') || strstr($text, 'ปัญหา')){
+		    $text = "กรุณากรอกรายละเอียดตามนี้ https://devsbottext.herokuapp.com/complainform.php?userId=".$userId;
+		}
                 $this->echoBack($replyToken, $text);
                 break;
         }
