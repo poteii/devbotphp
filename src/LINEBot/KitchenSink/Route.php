@@ -136,10 +136,5 @@ class Route
             $res->write('OK');
             return $res;
         });
-        
-        $app->post('/complain', function() using ($app) {
-
-            $app->render('complainform.php');
-        });
     }
 }
