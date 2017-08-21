@@ -137,7 +137,7 @@ class Route
             return $res;
         });
         
-        $app->post('/complain', function (\Slim\Http\Request $req, \Slim\Http\Response $res) {
+        $app->get('/complain', function (\Slim\Http\Request $req, \Slim\Http\Response $res) {
 
             $res->write('OK');
             return $res;
