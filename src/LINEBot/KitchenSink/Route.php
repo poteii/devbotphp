@@ -137,10 +137,9 @@ class Route
             return $res;
         });
         
-        $app->get('/complain', function (\Slim\Http\Request $req, \Slim\Http\Response $res) {
+        $app->post('/complain', function() using ($app) {
 
-            $res->write('OK');
-            return $res;
+            $app->render('complainform.php');
         });
     }
 }
