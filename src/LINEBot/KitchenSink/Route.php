@@ -141,6 +141,6 @@ class Route
 
             $res->write('OK');
             return $res;
-        }
+        });
     }
 }
