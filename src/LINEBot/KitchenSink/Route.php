@@ -136,5 +136,11 @@ class Route
             $res->write('OK');
             return $res;
         });
+        
+        $app->post('/complain') {
+
+            $res->write('OK');
+            return $res;
+        }
     }
 }
