@@ -60,8 +60,6 @@ class TextMessageHandler implements EventHandler
         $this->logger = $logger;
         $this->req = $req;
         $this->textMessage = $textMessage;
-        $this->redis = new Client(getenv('
-redis://h:p124f3875f348e38f1dc7cec31fd2acbbb43201e9658f69bf73614299557b2764@ec2-34-227-145-196.compute-1.amazonaws.com:36069'));
     }
 
     public function handle()
